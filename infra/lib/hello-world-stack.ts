@@ -98,6 +98,21 @@ export class HelloWorldStack extends cdk.Stack {
       description: 'Public URL of the Hello World site',
       tier: ssm.ParameterTier.STANDARD,
     });
+    // Portal lists this work from this one parameter. Portal's README describes the fields.
+    new ssm.StringParameter(this, 'PortalRegistration', {
+      parameterName: '/portal/works/hello-world',
+      stringValue: this.toJsonString({
+        name: 'Hello World',
+        inscription: 'A simple first page, published beyond the gate.',
+        kind: 'cloudfront',
+        order: 10,
+        url: siteUrl,
+        kvsArn: store.keyValueStoreArn,
+        kvsKey: 'gate',
+      }),
+      description: 'Portal registration for Hello World',
+      tier: ssm.ParameterTier.STANDARD,
+    });
     new cdk.CfnOutput(this, 'SiteUrl', {
       description: 'Hello World. Open while the gate is unsealed.',
       value: siteUrl,

@@ -11,7 +11,8 @@ The page itself is [`index.html`](index.html). Nothing here runs all the time ex
 | Private S3 bucket | Holds `index.html` |
 | CloudFront | HTTPS on `*.cloudfront.net` |
 | CloudFront Function + key-value store | The gate. Key `gate` = `sealed` stops the page at the edge. A missing key means open. |
-| SSM `/hello-world/kvs-arn` and `/hello-world/url` | Addresses Portal reads |
+| SSM `/portal/works/hello-world` | Portal registration: name, URL and gate, as JSON. Portal lists this work while it exists. |
+| SSM `/hello-world/kvs-arn` and `/hello-world/url` | The same addresses on their own, for scripts |
 
 Sealing does not delete the site. The next request gets a short "gate is sealed" page and never reaches S3. Opening writes `gate=open`. Edges follow within a few seconds.
 
@@ -47,6 +48,6 @@ npx cdk bootstrap   # first time in the account/region only
 npx cdk deploy HelloWorldStack
 ```
 
-Outputs: **SiteUrl**, plus the SSM paths Portal already expects. Deploy Portal after this, or before — Portal shows the stone as unbound until these parameters exist.
+Outputs: **SiteUrl**. The deploy also publishes Hello World's Portal registration, so it appears on Portal's page with no Portal deploy.
 
 `cdk destroy` deletes the bucket and the site files. `index.html` stays in this folder.
